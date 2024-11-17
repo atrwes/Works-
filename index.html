@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    /* Sekme butonlarının stilini ayarlıyoruz */
+    .tab-buttons {
+        display: flex; /* Butonları yan yana sıralar */
+        margin-bottom: 10px;
+    }
+
+    .tab-buttons button {
+        padding: 10px 20px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+        margin-right: 5px;
+    }
+
+    /* Sekme içeriklerinin başlangıç stilini ayarlıyoruz */
+    .tab-content {
+        display: none; /* Başlangıçta tüm içerikler gizli */
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+    }
+
+    /* Aktif olan sekme içeriğini görünür yapacağız */
+    .active {
+        display: block; /* Aktif içerik görünecek */
+    }
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS-6878-4</title>
+</head>
+<!-- HedefimizSekmeye tıklayınca yazı ve başlık içeriğinin değiştiği bir Tablist yapalım. Örnek:Koşullar ve bilgilendirmelerİlk önce kafamızda algoritmayı kurmaya çalışalım:Üstteki London, Paris, Tokyo yazan yerler tıklanabilir buton olmalıBu butonlara tıkladığımızda ne gerçekleşmeli?Tıkladığımız butonun rengini değiştirmeliyiz
+Alttaki yazıları gizleyip başka yazılar göstermeliyizPeki css’te bir elementi nasıl gizleyip gösteriyorduk?Butonlara tıkladığımızda aynı anda birkaç eylem gerçekleşiyor ve eylemlerintürü, çalışma mantığı aynı olsa da her seferinde farklı bir yere etki ediyorYani ortada tekrar tekrar tetiklenen işlemler, algoritmalar var. JavaScript’tebu tarz durumlar için ne kullanıyorduk?Değişen kısımları parametre/argüman göndererek ayarlıyorduk. O zamanbutona tıkladığımızda tetiklediğimiz şeyin içerisine argüman göndermemizlazım ki hangi sekmeyi seçtiğimiz belli olsunYazıyı ve butonu seçip o elementlerin görünüşünü değiştirmemiz lazımYazı ve butonlar elementler. DOM’da bir elementi nasıl seçiyorduk?Görünüşünü değiştirmekten kastımız gizlemek veya göstermek. Bunun içinhangi css özelliğini kullanmamız gerekiyor?Yapmamız gereken işlem basit aslında. Döngü (for, while vs.) kullanmamıza gerekyok, ilk başta işin mantığını anlayıp basitçe halledelim. Aşağıdaki talimatları aşamaaşama sırasıyla takip edelim:1. İlk önce HTML CSS ile tablist’imizin temelini oluşturalım:a. 3 adet sekme değiştirme butonumuz ve 3 adet sekme içeriğimiz varb. HTML tarafında sekme değiştirme butonlarımız yan yana olacak, aynışekilde sekme içeriklerimiz de alt alta olacakYani normalde sekmeye tıkladığımızda sadece o sekmeye yönelik içerikgözükecek ama ilk aşamada biz tüm içerikler alt alta gözükecek şekildeayarlayalım. Yani tüm sekme içerikleri direkt alt alta olsun. London’unyazısı da, Paris’in yazısı da, Tokyo’nun yazısı da alt alta gözüksünc. HTML tarafında elementlere id vermemiz gerekiyor şimdi:i. London’un yazı içeriği elementine “tab1-content” id’si verelimii. Paris’in yazı içeriği elementine “tab2-content” id’si verelimiii. Tokyo’nun yazı içeriği elementine “tab3-content” id’si verelimd. Şimdi de tüm sekme içeriklerini gizleyelim:
+i. “display: none” veren bir class oluşturalım css’teii. O class’ı tüm sekme içeriği elementlerine verelimŞu anda alt alta koymuş olduğumuz tüm sekmeler gizlenmiş olmasılazımDaha sonraki aşamalarda JavaScript ile bu içerikleri teker tekergösterteceğizBuraya kadar JavaScript kullanmadık, sadece HTML CSS kullanarak tablisttasarladık. Bu aşamadan sonra JavaScript devreye girecek2. Şimdi tüm Tablist butonlarına ayrı ayrı fonksiyonlar bağlayalım:a. Sekme butonları listesinde herhangi bir butona bastığımızda o sekmeye aitözel olarak oluşturulmuş bir fonksiyon tetiklenmeli:i. London’a bastığımızda London’un fonksiyonu tetiklenecekii. Paris’e bastığımızda Paris’in fonksiyonu tetiklenecekiii. Tokyo’ya bastığımızda Tokyo’nun fonksiyonu tetiklenecekYani her bir sekme butonunun kendine ait tetiklediği bir fonksiyon olacakŞimdilik fonksiyonları sadece tanımlayalım, içleri boş olsunPeki bu fonksiyonlar ne yapacak? İçlerine ne yazacağız? Bir sonrakiadımda ona geliyoruz3. Her bir sekme fonksiyonu, kendi sekmesinin içeriğini göstermeli. Örneğin:a. London sekmesinin butonuna bastığımızda London’un sekme içeriğigösterilmelib. Paris sekmesinin butonuna bastığımızda Paris’in sekme içeriği gösterilmelic. Tokyo sekmesinin butonuna bastığımızda Tokyo’nun sekme içeriğigösterilmelid. Bunu nasıl yapacağız? Her bir sekme butonu için ayrı ayrı fonksiyonlaroluşturmuştuk. O fonksiyonların içine, ilgili sekmedeki “display: none” verenclass’ı kaldıracak JavaScript kodunu yazalımYardımcı kaynaklara bakabiliriz
+“display: none” kodu olan class’ı JavaScript sayesinde ilgili elementtenkaldırdığımızda, mantıken elementin içeriği artık görünür olacak, çünkü“display: none” kodu o elementi gizlemeye yarıyordu ve biz o kodu verenclass’ı JavaScript ile kaldırmış oldukBu sefer baktığımızda şöyle bir sıkıntımız var: Herhangi bir sekmeniniçeriğini göstermek için bir sekme butonuna bastığımızda o sekmenin içeriğigörünür oluyor ancak başka bir sekme butonuna daha tıkladığımızdaonunki de geliyor, eskisininkini gizlemiyorBir sonraki adımda, sekme fonksiyonlarına biraz kod eklemesi yaparakdiğer sekmelerin içeriklerini gizleyip bu sorunu çözeceğiz4. Her bir sekme fonksiyonu şu an kendi sekmesinin içeriğini gösterebiliyor amadiğer sekmelerin içeriğini gizlemiyor. Şimdi de diğer sekmelerin içeriğinigizletecek kodları sekme fonksiyonuna eklemeliyiz. Örneğin:a. London sekmesinin butonuna bastığımızda:i. Paris sekmesinin içeriğini gizlemeliyizii. Tokyo sekmesinin içeriğini gizlemeliyizb. Paris sekmesinin butonuna bastığımızda:i. London sekmesinin içeriğini gizlemeliyizii. Tokyo sekmesinin içeriğini gizlemeliyizc. Tokyo sekmesinin butonuna bastığımızda:i. Paris sekmesinin içeriğini gizlemeliyizii. London sekmesinin içeriğini gizlemeliyizİçerik gizlemek için ne yapmamız gerekiyor? “display: none” css kodunuveren class’ı, gizlemek istediğimiz elemente JavaScript ile eklememizgerekiyor elbetteYardımcı kaynaklara bakabiliriz5. Artık elimizde tam fonksiyonel bir tablist yapısı var. Bir sekmeye tıkladığımızdao sekmenin içeriği gösterilip diğer sekmelerinki gizleniyor.
+Ama sayfayı ilk açtığımızda tüm sekmeler kapalı gözüküyor, sadece sekmebutonları gözüküyor. Sayfa yüklendiğinde hiçbir sekme butonuna basmasakbile ilk başta ilk sekmenin içeriğini gösterebiliriz en azından. Yani ilk sekmeaçık bir şekilde başlatabiliriz sayfamızı. Bunu nasıl yapabiliriz?Çok basit. Burada JavaScript ile bir şey yapmamıza hiç gerek yok,sadece HTML ile burayı çözebilirizNormalde her sekme içeriğine ilk başlarda ayrı ayrı “display: none”veren css class’ını eklemiştik. Bu ne işe yarıyordu? Sayfamız ilkyüklendiği sırada her sekmenin içeriği gizli bir şekilde başlamamızısağlıyordu. Daha sonradan sekme butonlarına tıklayarak o içeriklerigösteriyordukTek yapmamız gereken şey ilk sekmemizden “display: none” csskodunu veren class’ı kaldırmak. Bu sayede sayfa yüklendiği sıradailk sekmenin içeriği gözükecek şekilde sayfamız açılacak6. Gayet güzel bir tablist yapısı oluşturduk. Düzgün bir şekilde çalışıyor, ilk sayfayüklendiğinde de ilk sekme açık bir şekilde başlıyor ve bu sayede sayfamız boşda gözükmüyor, dolu gözüküyor.Fakat hangi sekmenin açık olduğunu, o sekme butonunda göremiyoruz şuanAçık olan sekmenin ilgili sekme butonunun arkaplanını değiştirerek hangisekmenin o an açık olduğunu kullanıcılara güzel bir şekilde ifade edebilirizBunun için tek yapmamız gereken şey, daha önceden yazıp kullandığımızsekme butonlarına biraz kod eklemekEklediğimiz bu kod, bu sefer sekme içeriğine class eklemek yerinesekme butonuna class eklemeli ve eklediği bu class da butonunarkaplan rengini değiştirmeye yaramalı1. İlk önce sekme butonlarına HTML tarafında id vererek başlayalım (buaşamada javascript ile alakalı bir şey yok, html kodunu elimizledeğiştireceğiz sadece):a. London’un sekme butonu elementine “tab1-button” id’si verelimb. Paris’in sekme butonu elementine “tab2-button” id’si verelim
+c. Tokyo’nun sekme butonu elementine “tab3-button” id’si verelim2. Artık bundan sonrasının JavaScript kodunu da talimatsız bir şekildekendimiz yazalım. Zaten daha önce bu ödevde defalarca benzeradımları gerçekleştirdik, aynı mantıkla bu sefer buton arkaplanlarınıdeğiştirteceğiz :)
+Yardımcı Kaynaklar🔑 ”css display property”🔑 ”css display none”🔑 ”js dom select element”🔑 ”js remove class from element”🔑 ”js add class to element” -->
+<img src="1.jpeg" alt="onlyjs" width="500" height="333">
+<body>
+  <script></script>
+    <div>
+  <canvas id="myCanvas" width="200" height="100" style="border:1px solid #b614a3;">
+    </canvas>
+    
+    <script>
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    ctx.font = "30px Arial";
+    ctx.strokeText("World City's",15,50);
+    </script>
+    </div>
+  <!-- Sekme butonları -->
+  <div class="tab-buttons">
+    <button onclick="showTab('tab1-content')">London</button>
+    <button onclick="showTab('tab2-content')">Paris</button>
+    <button onclick="showTab('tab3-content')">Tokyo</button>
+</div>
+
+<!-- Sekme içerikleri -->
+<div id="tab1-content" class="tab-content">
+    <h2>London</h2>
+    <p>London is the capital and largest city of both England and the United Kingdom, with a population of 8,866,180 in 2022.</p>
+</div>
+<div id="tab2-content" class="tab-content">
+    <h2>Paris</h2>
+    <p>Paris the capital and largest city of France. With an official estimated population of 2,102,650 residents in January 2023.</p>
+</div>
+<div id="tab3-content" class="tab-content">
+    <h2>Tokyo</h2>
+    <p>Tokyo, officially the Tokyo Metropolis, is the capital of Japan and one of the most populous cities in the world, with a population of over 14 million residents within the city proper as of 2023.</p>
+</div>
+
+<script>
+    // Sayfa yüklendiğinde ilk sekme içeriğini göster
+    document.addEventListener("DOMContentLoaded", function() {
+        showTab('tab1-content'); // Başlangıçta London içerik gösterilsin
+    });
+
+    // Sekme değiştirici fonksiyon
+    function showTab(tabId) {
+        // Tüm sekme içeriklerini gizle
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => content.classList.remove('active'));
+
+        // Aktif olan sekmeyi göster
+        const activeTab = document.getElementById(tabId);
+        activeTab.classList.add('active');
+    }
+</script>
+
+  <script>
+      // Buton elementini seçiyoruz
+      const gosterButon = document.getElementById('gosterButon');
+      // Metin kutusunu seçiyoruz
+      const metinKutusu = document.getElementById('metinKutusu');
+
+      // Butona tıklandığında metin kutusunu göster
+      gosterButon.addEventListener('click', function() {
+          // Metin kutusunu görünür yap
+          metinKutusu.style.display = 'block';
+      });
+    </script>
+
+</ul>
+
+</div>
+</body>
+</html>
